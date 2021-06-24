@@ -1,0 +1,84 @@
+@media screen and (max-width: 1185px) {
+
+  table.timetable td {
+    padding: 0.1em;
+    font-size: smaller;
+  }
+
+  table.timetable th {
+    border: 1px solid black;
+    padding: 0.1em;
+    font-size: smaller;
+  }
+}
+
+
+@media screen and (max-width: 750px) {
+  div.teachers_table table.teachers_table,
+  table.teachers_table tr, 
+  table.teachers_table th,
+  table.teachers_table td,
+  table.teachers_table tbody,
+  table.teachers_table thead {
+    display: block;
+  }
+
+  /* Hide table headers (but not display: none;, for accessibility) */
+  table.teachers_table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  table.teachers_table tr {
+    margin: 0 0 1rem 0;
+  }
+    
+  table.teachers_table tr:nth-child(odd) {
+    background: #ccc;
+  }
+
+  table.teachers_table td {
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 37%;
+  }
+
+  table.teachers_table td:before {
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 0;
+    left: 6px;
+    width: 35%;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+
+  table.teachers_table td:nth-of-type(1):before { content: "Nr"; }
+  table.teachers_table td:nth-of-type(2):before { content: "Full Name"; }
+  table.teachers_table td:nth-of-type(3):before { content: "Email"; }
+  table.teachers_table td:nth-of-type(4):before { content: "Phone Number"; }
+  table.teachers_table td:nth-of-type(5):before { content: "Subject"; }
+  table.teachers_table td:nth-of-type(6):before { content: "Class"; }
+}
+
+@media screen and (min-width: 751px) {
+  table.teachers_table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  table.teachers_table td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  table.teachers_table tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+}

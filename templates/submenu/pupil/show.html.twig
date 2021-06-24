@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Pupil: {{ pupil.getName }}</h2>
+    <table class="default">
+        <tr>
+            <th>Name</th>
+            <td>{{ pupil.getName }}</td>
+        </tr>
+        <tr>
+            <th>Sex</th>
+            <td>{{ pupil.getSex }}</td>
+        </tr>
+        <tr>
+            <th>Class</th>
+            <td>
+                <a href="{{ path('show_class', {slug: pupil.getClass.getId}) }}">{{ pupil.getClass.getName }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Phone to parents</th>
+            <td>{{ pupil.getPhoneToParents }}</td>
+        </tr>
+    </table>
+    {% if showGrades %}
+        <a href="{{ path('show_pupil_grades', {slug: pupil.getId}) }}">show grades</a>
+    {% endif %}
+{% endblock %}

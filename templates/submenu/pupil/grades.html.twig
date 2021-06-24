@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="center_text">{{ pupil.getName }}</h2>
+    <table class="default">
+    {% for course_grade in grades %}
+        <tr>
+            <th>{{ course_grade.getSubject.getName }} ({{ course_grade.getSubject.getTeacher.getName }})</th>
+            <td>
+                {% for grade in course_grade.getGrades %}
+                    {{ grade }}, 
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

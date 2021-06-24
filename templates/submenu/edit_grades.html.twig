@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('show_subject_grades', {'subject_id': grades[0].getSubject.getId }) }}">Back</a>
+    </div>
+    <div id="edit_grades_form">
+        <h2>{{ title }}</h2>
+        {# form(form1) #}
+        {{ form_start(form1) }}
+            {% for key, value in form1.grades %}
+                {{ form_row(value) }}
+                <span id="form_edgr_{{ key }}" class="eg_btt_br">
+                    <button type="button" class="remove_row" value="{{ key }}">Remove</button>
+                    <br>
+                </span>
+            {% endfor %}
+        {{ form_end(form1) }}
+        <button type="button" id="add_row">Add new grade</button>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/gradee.js') }}"></script>
+{% endblock %}
+

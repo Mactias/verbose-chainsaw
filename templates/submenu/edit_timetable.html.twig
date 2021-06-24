@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block navigation %}
+    <a href="{{ path('main_menu') }}">Back</a>
+{% endblock %}
+
+{% block body %}
+    <h1>timetable class {{ class01.getName }}</h1>
+    <form id="form_tt" method="post" action="{{ path('save_timetable') }}">
+    <table class="timetable">
+        <tr>
+            <th></th>
+            <th>0</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+            <th>10</th>
+        </tr>
+        {% for key, arr in class01.getCurrentTimetable %}
+            <tr>
+            {% for key2, lesson in arr %}
+                {% if loop.index0 == 0 %}
+                    <th><input type="text" name="{{ key2 }}" value="{{ lesson }}" id="{{ key2 }}" class="ttfr" disabled></th>
+                {% else %}
+                    <td><input type="text" name="{{ key2 }}" value="{{ lesson }}" id="{{ key2 }}"></td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" name="submit" value="Save Timetable">
+    <input type="submit" name="submit" value="Return Default Timetable">
+    </form>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/etimetable.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,113 @@
+form#form_tt input[type="text"].ttfr{
+  width: 2em;
+}
+
+th.ttfr {
+  width: 2em;
+}
+
+.center_text {
+  text-align: center;
+}
+
+div.greenborder {
+  border: 1px solid #4cab1a;
+  padding: 0.3em;
+  margin-bottom: 0.2em;
+}
+
+table.default{
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.default td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+table.default tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+table.timetable{
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.timetable th {
+  border: 2px solid black;
+  background-color: #90e065;
+  text-align: left;
+  padding: 0.3em;
+}
+
+table.timetable td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 0.3em;
+}
+
+form#form_tt input[type="text"]{
+  width: 6em;
+}
+
+ul#grades {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+ul#grades li {
+  float: left;
+}
+
+ul#grades li a {
+  display: block;
+  text-align: center;
+  padding: 10px;
+}
+
+div#edit_grades_form div {
+  display: inline;
+}
+
+div#form {
+  background-color: cyan;
+}
+
+div#form label {
+  /* margin-right: 2em; */
+  width: 10em;
+}
+
+body {
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+div#body {
+  margin: 3px;
+}
+
+div#mm_tt_mobile a img {
+  width: 100%;
+}
+
+input#inputEmail {
+  position: relative;
+  left: 30px;
+}
+
+div#admin_panel {
+  font-size: 1.25em;
+}
+
+div#admin_panel li {
+  margin-bottom: 10px;
+}

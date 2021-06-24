@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>List of all Pupils</h2>
+    <div class="bigger_font">
+    {{ form(pupilForm) }}
+    <table class="default">
+        <tr>
+            <th>Nr</th>
+            <th>Name</th>
+            <th>Sex</th>
+            <th>Class</th>
+            <th>Phone to parents</th>
+        </tr>
+        {% for pupil in pupils %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ path('show_pupil', {slug: pupil.getId}) }}">{{ pupil.getName }}</a></td>
+            <td>{{ pupil.getSex }}</td>
+            <td><a href="{{ path('show_class', {slug: pupil.getClass.getId}) }}">{{ pupil.getClass.getName }}</a></td>
+            <td>{{ pupil.getPhoneToParents }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}

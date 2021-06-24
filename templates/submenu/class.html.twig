@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+    <h2>Class {{ aclass.getName }}</h2>
+    <table class="default">
+        <tr>
+            <th>Name</th>
+            <td>{{ aclass.getName }}</td>
+        </tr>
+        <tr>
+            <th>Tutor</th>
+            <td><a href="{{ path('show_teacher', {slug: aclass.getTutor.getId}) }}">{{ aclass.getTutor.getName }}</a></td>
+        </tr>
+        <tr>
+            <th>Pupils</th>
+            <td>
+                {% for pupil in aclass.getPupils %}
+                    <a href="{{ path('show_pupil', {slug: pupil.getId}) }}">{{ pupil.getName }}</a>
+                    {% if not loop.last %}
+                        <br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>Subjects</th>
+            <td>
+                {% for subject in aclass.getSubjects %}
+                    {{ subject.getName }}: {{ subject.getTeacher.getName }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    </div>
+
+    <div id="mm_tt">
+        <h3 class="center_text">TIMETABLE</h3>
+        {{ include('timetable.html.twig') }}
+    </div>
+    <div id="mm_tt_mobile">
+        <h3 class="center_text">TIMETABLE</h3>
+        {#<a href="{{ path('edit_timetable') }}">Edit timetable</a><br><br>#}
+        <a href="{{ path('mobile_timetable', {'slug': aclass.getId}) }}"><img src="{{ asset('images/table_tap2.png') }}" alt="link to table"/></a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/showclass.js') }}"></script>
+{% endblock %}

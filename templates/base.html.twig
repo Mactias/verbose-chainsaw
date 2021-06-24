@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Homepage{% endblock %}</title>
+        {# Run `composer require symfony/webpack-encore-bundle`
+           and uncomment the following Encore helpers to start using Symfony UX #}
+        {% block stylesheets %}
+            {#{{ encore_entry_link_tags('app') }}#}
+            <link rel="stylesheet" href="{{ asset('css/default.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/small_screens.css') }}">
+        {% endblock %}
+    {% endblock %}
+    </head>
+    <body>
+        {% block navigation %}
+            <ul id="menu">
+                <li><a href="{{ path('show_subjects') }}">List of subjects</a></li>
+                <li><a href="{{ path('show_teachers') }}">List of teachers</a></li>
+                <li><a href="{{ path('show_classes') }}">List of classes</a></li>
+                <li><a href="{{ path('show_pupils') }}">List of pupils</a></li>
+                <li><a href="{{ path('main_menu') }}">Homepage</a></li>
+                {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                    <li id="logout"><a href="{{ path('app_logout') }}">Logout</a></li>
+                {% endif %}
+            </ul>
+        {% endblock %}
+
+        <div id="body">
+        {% block body %}{% endblock %}
+        </div>
+
+        {% block javascripts %}
+            {#{{ encore_entry_script_tags('app') }}#}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,54 @@
+ul#menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+ul#menu li {
+  float: left;
+}
+
+ul#menu li#logout {
+  float: right;
+}
+
+ul#menu li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+ul#menu li a:hover {
+  color: #2a401f;
+  background-color: #4cab1a;
+}
+
+@media screen and (max-width: 601px) {
+  ul#menu li#logout {
+    float: inherit;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  ul#menu {
+    display: block;
+  }
+  ul#menu li a {
+    font-size: 1.2em;
+    padding: 5px;
+  }
+  ul#menu li {
+    float: initial;
+  }
+  div.greenborder {
+    font-size: 1.25em;
+  }
+  table.default td, th {
+    padding: 4px;
+  }
+}

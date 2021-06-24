@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Teacher: {{ teacher.getName }}</h2>
+    <div>
+        <table class="default">
+            <tr>
+                <th>Full Name</th>
+                <td>{{ teacher.getName }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ teacher.getEmail }}</td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td>{{ teacher.getPhoneNumber }}</td>
+            </tr>
+            <tr>
+                <th>Class</th>
+                <td>
+                    {% if not teacher.getAclass is null %}
+                        <a href="{{ path('show_class', {slug: teacher.getAclass.getId}) }}">{{ teacher.getAclass.getName }}</a>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

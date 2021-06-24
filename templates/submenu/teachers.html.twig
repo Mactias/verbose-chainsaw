@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>list of all teachers</h2>
+    {{ form(teacher_form) }}
+    <div class="teachers_table">
+        <table class="teachers_table">
+            <thead>
+            <tr>
+                <th>Nr</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Subject</th>
+                <th>Class</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for teacher in teachers %}
+                {# if teacher.getName != 'Admin' #}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="{{ path('show_teacher', {slug: teacher.getId}) }}">{{ teacher.getName }}</a></td>
+                    <td>{{ teacher.getEmail }}</td>
+                    <td>{{ teacher.getPhoneNumber }}</td>
+                    <td>
+                        {% for subject in teacher.getSubject %}
+                            {% if loop.last %}
+                                {{ subject }} 
+                            {% else %}
+                                {{ subject }},
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if teacher.getAclass != null %}
+                            <a href="{{ path('show_class', {slug: teacher.getAclass.getId}) }}">{{ teacher.getAclass.getName }}</a>
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                </tr>
+                {# endif #}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/teachers.js') }}"></script>
+{% endblock %}

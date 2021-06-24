@@ -1,0 +1,99 @@
+index:
+    path: /
+    controller: App\Controller\SecurityController::login
+
+create_user:
+    path: /create-user
+    controller: App\Controller\EditEntityController::createUser
+
+update_user:
+    path: /update-user
+    controller: App\Controller\EditEntityController::updateUser
+
+updateAclass:
+    path: /update-class
+    controller: App\Controller\EditEntityController::updateAclass
+
+createSubject:
+    path: /create-subject
+    controller: App\Controller\EditEntityController::createSubject
+
+createGrades:
+    path: /create-grades
+    controller: App\Controller\EditEntityController::createGrades
+
+createManyGrades:
+    path: /create-manygrades
+    controller: App\Controller\EditEntityController::createManyGrades
+
+updateGrades:
+    path: /update-grades
+    controller: App\Controller\EditEntityController::updateGrades
+
+main_menu:
+    path: /main-menu
+    controller: App\Controller\DefaultController::mainMenu
+
+show_teachers:
+    path: /teachers
+    controller: App\Controller\DefaultController::showTeachers
+
+show_teacher:
+    path: /teacher/{slug}
+    controller: App\Controller\DefaultController::showTeacher
+
+show_classes:
+    path: /classes
+    controller: App\Controller\DefaultController::showClasses
+
+show_class:
+    path: /class/{slug}
+    controller: App\Controller\DefaultController::showClass
+
+show_pupils:
+    path: /pupils
+    controller: App\Controller\DefaultController::showPupils
+
+show_pupil:
+    path: /pupil/{slug}
+    controller: App\Controller\DefaultController::showPupil
+
+edit_timetable:
+    path: /edit-timetable
+    controller: App\Controller\DefaultController::editTimetable
+
+save_timetable:
+    path: /save-timetable
+    controller: App\Controller\DefaultController::saveTimetable
+
+mobile_timetable:
+    path: /mtimetable/{slug}
+    controller: App\Controller\DefaultController::mTimetable
+    defaults:
+        test: 'test1'
+
+mobile_timetable_educator:
+    path: /mtimetable
+    controller: App\Controller\DefaultController::mTimetableEducator
+
+show_subjects:
+    path: /show-subjects
+    controller: App\Controller\DefaultController::showSubjects
+
+school_register:
+    path: /schoolregister/{name}
+    controller: App\Controller\DefaultController::showAllSubjectGrades
+    defaults: 
+        name: ''
+
+show_pupil_grades:
+    path: /pupil/{slug}/grades
+    controller: App\Controller\DefaultController::showPupilGrades
+
+show_subject_grades:
+    path: /subject/{subject_id}/grades
+    controller: App\Controller\DefaultController::showSubjectGrades
+
+edit_subject_grades:
+    path: /subject/{subject_id}/edit-grades/{pupil_id}
+    controller: App\Controller\DefaultController::editSubjectGrades

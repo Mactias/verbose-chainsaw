@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block navigation %}
+{% endblock %}
+
+{% block body %}
+    <div>
+        <ul>
+            {% if enableEdit %}
+                <li><a href="{{ path('main_menu') }}">Back</a></li>
+                <li><a href="{{ path('edit_timetable') }}">Edit timetable</a></li>
+            {% else %}
+                <li><a href="{{ path('show_class', {'slug': aclass.getId}) }}">Back</a></li>
+            {% endif %}
+        </ul>
+        <h2 class="center_text">Timetable class: {{ aclass.getName }}</h2>
+    </div>
+    {{ include('timetable.html.twig') }}
+{% endblock %}

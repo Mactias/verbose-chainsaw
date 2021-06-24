@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <ul id="grades">
+        {% for subject in subjects %}
+            <li><a href="{{ path('school_register', {'name': subject.getName}) }}">{{ subject.getName }}</a></li>
+          {% endfor %}
+    </ul>
+
+    <div>
+        {% if grades is not empty %} 
+            <table class="default">
+                {% for pupilName, gradeObj in grades %}
+                <tr>
+                    <th>{{ pupilName }}</th>
+                    <td>
+                        {% for grade_arr in gradeObj.getGrades %}
+                            {{grade_arr}}, 
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

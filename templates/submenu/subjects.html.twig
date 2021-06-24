@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <h3>List of Subjects</h3>
+        {{form(sub_form)}}
+        <table class="default">
+            <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Teacher</th>
+                <th>Class</th>
+            </tr>
+            {% for subject in subjects %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ subject.getName }}</td>
+                <td>{{ subject.getTeacher.getName }}</td>
+                <td>{{ subject.getClass.getName }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

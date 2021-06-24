@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>List of all Classes</h2>
+    <table class="default">
+        <tr>
+            <th>Nr</th>
+            <th>Name</th>
+            <th>Tutor this class</th>
+        </tr>
+        {% for class in classes %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ path('show_class', {slug: class.getId}) }}">{{ class.getName }}</a></td>
+            <td><a href="{{ path('show_teacher', {slug: class.getTutor.getId}) }}">{{ class.getTutor.getName }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

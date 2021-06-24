@@ -1,0 +1,51 @@
+{% block timetable %}
+<table class="timetable">
+    <tr>
+        <th></th>
+        <th>
+            0<br>7:10-7:55
+        </th>
+        <th>
+            1<br>8:00-8:45
+        </th>
+        <th>
+            2<br>9:00-9:45
+        </th>
+        <th>
+            3<br>9:00-9:45
+        </th>
+        <th>
+            4<br>11:00-11:45
+        </th>
+        <th>
+            5<br>12:00-12:45
+        </th>
+        <th>
+            6<br>13:00-13:45
+        </th>
+        <th>
+            7<br>14:00-14:45
+        </th>
+        <th>
+            8<br>14:50-15:35
+        </th>
+        <th>
+            9<br>15:40-16:25
+        </th>
+        <th>
+            10<br>16:30-17:15
+        </th>
+    </tr>
+    {% for arr in aclass.getCurrentTimetable %}
+        <tr>
+        {% for lesson in arr %}
+            {% if loop.index0 == 0 %}
+                <th>{{ lesson }}</th>
+            {% else %}
+                <td>{{ lesson }}</td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
