@@ -7,30 +7,40 @@ use App\Entity\ClassSchool;
 use App\Entity\Pupil;
 use App\Entity\Subject;
 use App\Entity\Teacher;
+use App\Form\TeacherType;
+use App\Form\TeacherUpdateType;
 use App\Repository\CourseGradesRepository;
 use App\Repository\PupilRepository;
 use App\Repository\SubjectRepository;
+use App\Repository\TeacherRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type as Form;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EditEntityController extends AbstractController
 {
     private $pupilRepo;
     private $subjectRepo;
+    private $teacherRepo;
     private $div_style;
 
-    public function __construct(PupilRepository $pupilRepo, SubjectRepository $subjectRepo)
+    public function __construct(PupilRepository $pupilRepo, SubjectRepository $subjectRepo, TeacherRepository $teacherRepo)
     {
         $this->pupilRepo = $pupilRepo;
         $this->subjectRepo = $subjectRepo;
+        $this->teacherRepo = $teacherRepo;
 
         $this->div_style = "style='font-size: 3.5em'";
     }
 
-    public function createUser(UserPasswordEncoderInterface $encoder): Response
+    public function createTeacher(Request $request, UserPasswordEncoderInterface $encoder, ValidatorInterface $validator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -38,39 +48,120 @@ class EditEntityController extends AbstractController
         $entityManager->clear();
 
         $teacher = new Teacher();
-        $teacher->setName("Admin");
-        $teacher->setEmail('admin4@admin.com');
-        $teacher->setPassword($encoder->encodePassword($teacher, 'admin'));
-        $teacher->setPhoneNumber('000000000');
-        $teacher->setSubject([]);
+        $teacher->setRoles([]);
+        $teacher->setSubject(['', '', '', '']);
+        $form = $this->createForm(TeacherType::class, $teacher);
 
-        $entityManager->persist($teacher);
-        $entityManager->flush();
-        $entityManager->clear(Teacher::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $errors = $validator->validate($data);
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
 
-        return new Response("<div {$this->div_style}>created new user {$teacher->getId()} {$this->generateMenuLink()}</div>");
+                return new Response($errorsString);
+            }
+
+            $admin = isset($request->request->get('teacher')['isAdmin']);
+            if ($data->getAclass() && $admin) {
+                $data->setRoles([Teacher::ROLE_EDUCATOR, Teacher::ROLE_ADMIN]);
+            } elseif ($data->getAclass() && !$admin) {
+                $data->setRoles([Teacher::ROLE_EDUCATOR,]);
+            } elseif ($admin) {
+                $data->setRoles([Teacher::ROLE_ADMIN,]);
+            }
+
+            $data->setPassword($encoder->encodePassword($data, $data->getPassword()));
+
+            $entityManager->persist($data);
+            $entityManager->flush();
+            $entityManager->clear(Teacher::class);
+
+            $teacher_url = $this->generateUrl('show_teacher', ['slug' => $data->getId()]);
+
+            return new Response(
+                "<a href=''>Back</a><br>
+                You have created new Teacher!<br>
+                <a href='{$teacher_url}'>{$data->getName()}</a>"
+            );
+        }
+
+        return $this->render('edit_entity/create_teacher.html.twig', ['form' => $form->createView(),]);
     }
 
-    public function updateUser(UserPasswordEncoderInterface $encoder): Response
+    public function updateTeacher(int $slug, UserPasswordEncoderInterface $encoder, Request $request, ValidatorInterface $validator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $entityManager->clear();
 
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->clear();
+        $teacher = $this->teacherRepo->find($slug);
 
-        $teacher = $entityManager->getRepository(Teacher::class)->find(21);
-        /* $teacher->setSubject(['German', 'Greek',]); */
-        /* $teacher->setPassword($encoder->encodePassword($teacher, 'qwerty111')); */
-        /* $teacher->setRoles(['ROLE_ADMIN',]); */
+        $tarr = $teacher->getSubject();
+        array_push($tarr, '', '', '');
+        $teacher->setSubject($tarr);
 
-        /* $entityManager->flush(); */
-        $entityManager->clear(Teacher::class);
+        $form = $this->createForm(TeacherUpdateType::class, $teacher);
 
-        $strResponse = "<div {$this->div_style}>success {$this->generateMenuLink()}</div>";
-        return new Response($strResponse);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $errors = $validator->validate($data);
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
+
+                return new Response($errorsString);
+            }
+
+            $admin = isset($request->request->get('teacher_update')['isAdmin']);
+            if ($data->getAclass() && $admin) {
+                $data->setRoles([Teacher::ROLE_EDUCATOR, Teacher::ROLE_ADMIN]);
+            } elseif ($data->getAclass() && !$admin) {
+                $data->setRoles([Teacher::ROLE_EDUCATOR,]);
+            } elseif ($admin) {
+                $data->setRoles([Teacher::ROLE_ADMIN,]);
+            } else {
+                $data->setRoles([]);
+            }
+
+            $entityManager->persist($data);
+            $entityManager->flush();
+            $entityManager->clear(Teacher::class);
+
+            $teacher_url = $this->generateUrl('show_teacher', ['slug' => $data->getId()]);
+
+            return new Response(
+                "Success. You have edited this Teacher!<br>
+                <a href='{$teacher_url}'>{$data->getName()}</a>"
+            );
+        }
+
+        return $this->render('edit_entity/create_teacher.html.twig', ['form' => $form->createView(),]);
     }
 
+    public function deleteTeacher(int $slug, Request $request): Response
+    {
+        $teacher = $this->teacherRepo->find($slug);
+
+        $form = $this->createFormBuilder()
+            ->add('cancel', Form\SubmitType::class)
+            ->add('delete', Form\SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->get('cancel')->isClicked() && $form->isValid()) {
+            return $this->redirectToRoute('show_teacher', ['slug' => $slug]);
+        } elseif ($form->get('delete')->isClicked() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($teacher);
+            $em->flush();
+            $em->clear(Teacher::class);
+
+            $this->addFlash('success', "Successfully deleted {$teacher->getName()}!");
+            return $this->redirectToRoute('show_teachers');
+        }
+        return $this->render('edit_entity/delete_teacher.html.twig', ['form' => $form->createView(), 'teacher' => $teacher]);
+    }
+    
     public function updateAclass(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

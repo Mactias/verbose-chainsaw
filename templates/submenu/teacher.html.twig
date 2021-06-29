@@ -1,12 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h2>Teacher: {{ teacher.getName }}</h2>
+    <h2>
+        Teacher: {{ teacher.getName }}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('update_teacher', {'slug': teacher.getId}) }}">Edit</a>
+            <a href="{{ path('delete_teacher', {'slug': teacher.getId}) }}">Delete</a>
+        {% endif %}
+    </h2>
     <div>
         <table class="default">
             <tr>
                 <th>Full Name</th>
-                <td>{{ teacher.getName }}</td>
+                <td>
+                    {{ teacher.getName }}
+                </td>
             </tr>
             <tr>
                 <th>Email</th>

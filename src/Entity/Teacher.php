@@ -5,12 +5,16 @@ namespace App\Entity;
 use App\Repository\TeacherRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TeacherRepository::class)
  */
 class Teacher implements UserInterface
 {
+    public const ROLE_EDUCATOR = 'ROLE_EDUCATOR';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -20,6 +24,9 @@ class Teacher implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email(
+     *      message = "The email '{{ value }}' is not a valid email."
+     * )
      */
     private $email;
 
@@ -31,21 +38,32 @@ class Teacher implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\Length(
+     *      min = 6,
+     *      max = 250,
+     * )
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=9)
+     * @Assert\Regex(
+     *      pattern="/^(\d){9}$/",
+     *      message="phone number must contain 9 numbers!"
+     * )
      */
     private $phone_number;
 
     /**
      * @ORM\Column(type="array", nullable=true)
+     * @Assert\NotBlank(message="select at lest one subject!")
      */
     private $subject = [];
 
@@ -166,6 +184,12 @@ class Teacher implements UserInterface
 
     public function setSubject(?array $subject): self
     {
+        foreach ($subject as $key => $value) {
+            if ($value === null) {
+                unset($subject[$key]);
+            }
+        }
+
         $this->subject = $subject;
 
         return $this;

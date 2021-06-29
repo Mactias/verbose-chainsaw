@@ -5,11 +5,11 @@
 {% block body %}
     <h2 class="center_text">Welcome {{ user.getName }}</h2>
 
-    {% if admin %}
+    {% if is_granted('ROLE_ADMIN') %}
         <div id="admin_panel">
             <ul>
-                <li><a href="{{ path('create_user') }}">Create new Teacher</a></li>
-                <li><a href="{{ path('update_user') }}">Update Teacher</a></li>
+                <li><a href="{{ path('create_teacher') }}">Create new Teacher</a></li>
+                <li><a href="{{ path('show_teachers') }}">Update Teacher</a></li>
                 <li><a href="{{ path('updateAclass') }}">Update Class</a></li>
                 <li><a href="{{ path('createSubject') }}">Create Subject</a></li>
                 <li><a href="{{ path('createGrades') }}">Create new Grades</a></li>
@@ -19,7 +19,7 @@
         </div>    
     {% endif %}
 
-    {% if educator %}
+    {% if is_granted('ROLE_EDUCATOR') %}
         <div class="greenborder">
             <h3>Your class <a href="{{ path('show_class', {'slug': aclass.getId}) }}">{{ aclass.getName }}</a></h3>
             <h4><a href="{{ path('school_register') }}">School Register</a></h4>
@@ -34,7 +34,7 @@
         </div>
     {% endif %}
 
-    {% if not admin %}
+    {% if not is_granted('ROLE_SUPER_ADMIN') %}
         <div class="greenborder bigger_font">
             <h3>Your subjects</h3>
             <ul>
@@ -45,7 +45,7 @@
         </div>
     {% endif %}
 
-    {% if educator %}
+    {% if is_granted('ROLE_EDUCATOR') %}
         <div class="greenborder" id="mm_tt">
             <h3 class="center_text">Timetable Class {{ aclass.getName }}</h3>
             <a href="{{ path('edit_timetable') }}">Edit timetable</a><br><br>

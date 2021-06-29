@@ -2,13 +2,17 @@ index:
     path: /
     controller: App\Controller\SecurityController::login
 
-create_user:
-    path: /create-user
-    controller: App\Controller\EditEntityController::createUser
+create_teacher:
+    path: /create-teacher
+    controller: App\Controller\EditEntityController::createTeacher
 
-update_user:
-    path: /update-user
-    controller: App\Controller\EditEntityController::updateUser
+update_teacher:
+    path: /update-teacher/{slug}
+    controller: App\Controller\EditEntityController::updateTeacher
+
+delete_teacher:
+    path: /delete-teacher/{slug}
+    controller: App\Controller\EditEntityController::deleteTeacher
 
 updateAclass:
     path: /update-class

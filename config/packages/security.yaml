@@ -1,4 +1,6 @@
 security:
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
     encoders:
         App\Entity\Teacher:
             algorithm: auto

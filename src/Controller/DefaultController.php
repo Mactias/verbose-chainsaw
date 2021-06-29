@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\CourseGradesRepository;
-use App\TeacherManager;
 use App\Entity\CourseGrades;
 use App\Entity\Subject;
 use App\Entity\ClassSchool;
@@ -26,11 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use function array_keys;
-use function array_unique;
-use function array_unshift;
-use function in_array;
-use function sort;
 
 class DefaultController extends AbstractController
 {
@@ -49,8 +43,9 @@ class DefaultController extends AbstractController
         $this->subjectRepo = $subjectRepo;
         $this->teacherRepo = $teacherRepo;
 
+        $this->admins = [];
         foreach ($this->teacherRepo->findBy([]) as $teacher) {
-            if (in_array('ROLE_ADMIN', $teacher->getRoles())) {
+            if (in_array('ROLE_SUPER_ADMIN', $teacher->getRoles())) {
                 $this->admins[] = $teacher;
             }
         }
@@ -63,11 +58,9 @@ class DefaultController extends AbstractController
         $user = $this->getUser();
         $class = $user->getAclass();
         $subjects = $this->subjectRepo->findBy(['teacher' => $user->getId()]);
-        $roleEducator = in_array('ROLE_EDUCATOR', $user->getRoles());
-        $roleAdmin = in_array('ROLE_ADMIN', $user->getRoles());
 
         return $this->render('mainmenu.html.twig', [
-            'user' => $user, 'aclass' => $class, 'subjects' => $subjects, 'educator' => $roleEducator, 'admin' => $roleAdmin
+            'user' => $user, 'aclass' => $class, 'subjects' => $subjects
         ]);
     }
 
@@ -76,11 +69,6 @@ class DefaultController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $teachers = $this->teacherRepo->findBy([], ['name' => 'ASC']);
-        for ($i=0; $i<count($teachers); $i++) {
-            if (in_array($teachers[$i], $this->admins)) {
-                unset($teachers[$i]);
-            }
-        }
 
         $tid['---'] = 'empty';
         $tsub['---'] = 'empty';
@@ -123,6 +111,12 @@ class DefaultController extends AbstractController
             $teachers = $this->teacherRepo->findByManyFields($form_data['subject'], $form_data['name'], $form_data['aclass']);
         }
 
+        foreach ($teachers as $key => $value) {
+            if (in_array($teachers[$key], $this->admins)) {
+                unset($teachers[$key]);
+            }
+        }
+
         return $this->render('submenu/teachers.html.twig', [
             'teachers' => $teachers,
             'teacher_form' => $form->createView(),
@@ -134,7 +128,7 @@ class DefaultController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $teacher = $repo->find($slug);
-        if (in_array('ROLE_ADMIN', $teacher->getRoles())) {
+        if (in_array('ROLE_SUPER_ADMIN', $teacher->getRoles())) {
             throw $this->createAccessDeniedException();
         }
 

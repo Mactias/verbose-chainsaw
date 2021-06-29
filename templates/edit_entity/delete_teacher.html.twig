@@ -1,0 +1,28 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Delete Teacher {{ teacher.getName }}{% endblock %}
+
+{% block body %}
+    {% if app.flashes('error') is defined %}
+        <div>
+            {% for flash in app.flashes('error') %}    
+                {{ flash }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div>
+        Do You really want delete Teacher:<br>
+        <b>{{ teacher.getName() }}</b><br>
+        <b>{{ teacher.getEmail() }}</b><br>
+    </div>
+
+    <div>
+    {{ form_start(form) }}
+        {{ form_widget(form.delete) }}
+        {{ form_widget(form.cancel) }}
+    {{ form_end(form) }}
+    </div>
+{% endblock %}
+
