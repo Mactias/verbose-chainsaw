@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if app.flashes('success') is defined %}
+        <div>
+            {% for flash in app.flashes('success') %}    
+                {{ flash }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div>
+        <h2>List of all Classes</h2>
+        <table class="default">
+            <tr>
+                <th>Name</th>
+            </tr>
+            {% for class in classes %}
+            <tr>
+                <td>
+                    <a href="{{ path('show_class', {slug: class.getId}) }}">{{ class.getName }}</a> | 
+                    <a href="{{ path('update_class', {'slug': class.getId}) }}">Edit</a> |
+                    <a href="{{ path('delete_class', {'slug': class.getId}) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

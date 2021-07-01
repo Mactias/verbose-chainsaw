@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Delete Teacher {{ teacher.getName }}{% endblock %}
+{% block title %}Delete Class {{ class.getName }}{% endblock %}
 
 {% block body %}
     {% if app.flashes('error') is defined %}
@@ -12,9 +12,9 @@
     {% endif %}
 
     <div>
-        Do You really want delete Teacher:<br>
-        <b>{{ teacher.getName() }}</b><br>
-        <b>{{ teacher.getEmail() }}</b><br>
+        Do You really want delete this Class?<br>
+        <b>Class:</b> {{ class.getName }}<br>
+        <b>Tutor this class:</b> {{ class.getTutor.getName }}<br>
     </div>
 
     <div>

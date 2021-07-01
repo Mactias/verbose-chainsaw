@@ -2,13 +2,23 @@
 
 namespace App\Controller;
 
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 use App\Entity\CourseGrades;
 use App\Entity\ClassSchool;
 use App\Entity\Pupil;
 use App\Entity\Subject;
 use App\Entity\Teacher;
+use App\Form\ClassType;
 use App\Form\TeacherType;
 use App\Form\TeacherUpdateType;
+use App\Repository\ClassSchoolRepository;
 use App\Repository\CourseGradesRepository;
 use App\Repository\PupilRepository;
 use App\Repository\SubjectRepository;
@@ -26,13 +36,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EditEntityController extends AbstractController
 {
+    private $classRepo;
     private $pupilRepo;
     private $subjectRepo;
     private $teacherRepo;
     private $div_style;
 
-    public function __construct(PupilRepository $pupilRepo, SubjectRepository $subjectRepo, TeacherRepository $teacherRepo)
+    public function __construct(ClassSchoolRepository $classRepo, PupilRepository $pupilRepo, SubjectRepository $subjectRepo, TeacherRepository $teacherRepo)
     {
+        $this->classRepo = $classRepo;
         $this->pupilRepo = $pupilRepo;
         $this->subjectRepo = $subjectRepo;
         $this->teacherRepo = $teacherRepo;
@@ -123,7 +135,6 @@ class EditEntityController extends AbstractController
                 $data->setRoles([]);
             }
 
-            $entityManager->persist($data);
             $entityManager->flush();
             $entityManager->clear(Teacher::class);
 
@@ -140,6 +151,8 @@ class EditEntityController extends AbstractController
 
     public function deleteTeacher(int $slug, Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $teacher = $this->teacherRepo->find($slug);
 
         $form = $this->createFormBuilder()
@@ -161,21 +174,125 @@ class EditEntityController extends AbstractController
         }
         return $this->render('edit_entity/delete_teacher.html.twig', ['form' => $form->createView(), 'teacher' => $teacher]);
     }
-    
-    public function updateAclass(): Response
+
+    public function createClass(Request $request, ValidatorInterface $validator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->clear();
+        $em = $this->getDoctrine()->getManager();
+        $em->clear();
 
-        $class = $entityManager->getRepository(ClassSchool::class)->find(4);
-        $class->setTimetable(['mo1'=>'math', 'fr9'=>'biology']);
+        $class = new ClassSchool();
+        $class->setTimetable(ClassSchool::decodeEmptyTimetableToArray());
+        $class->setCurrentTimetable(ClassSchool::decodeEmptyTimetableToArray());
 
-        $entityManager->flush();
-        $entityManager->clear(ClassSchool::class);
+        $form = $this->createForm(ClassType::class, $class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
 
-        return new Response("<div {$this->div_style}>updated ClassSchool {$class->getId()} {$this->generateMenuLink()}</div>");
+            $errors = $validator->validate($data);
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
+
+                return new Response($errorsString);
+            }
+
+            $tutor = $data->getTutor();
+            $tutor->addRole(Teacher::ROLE_EDUCATOR);
+
+            $em->persist($class);
+            $em->flush();
+            $em->clear(ClassSchool::class);
+            $em->clear(Teacher::class);
+
+            $this->addFlash('success', "created new class. Class: {$data->getName()}");
+            return $this->redirectToRoute('main_menu');
+        }
+        return $this->render('edit_entity/createClass.html.twig', ['form' => $form->createView()]);
+    }
+
+    public function showClasses()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $classes = $this->classRepo->findBy([]);
+
+        return $this->render('edit_entity/classes.html.twig', ['classes' => $classes]);
+    }
+
+    public function updateClass(int $slug, Request $request, ValidatorInterface $validator): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $em = $this->getDoctrine()->getManager();
+        $class = $this->classRepo->find($slug);
+        $currentTutor = $class->getTutor();
+
+        $form = $this->createForm(ClassType::class, $class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $errors = $validator->validate($data);
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
+
+                return new Response($errorsString);
+            }
+
+            $currentTutor->setAclass(null);
+            $currentTutor->removeRole(Teacher::ROLE_EDUCATOR);
+
+            $tutor = $data->getTutor();
+            $tutor->addRole(Teacher::ROLE_EDUCATOR);
+
+            $em->flush();
+            $em->clear(ClassSchool::class);
+            $em->clear(Teacher::class);
+
+            $this->addFlash('success', "Successfully updated Class: {$data->getName()}");
+            return $this->redirectToRoute('admin_show_classes');
+        }
+
+        return $this->render('edit_entity/createClass.html.twig', ['form' => $form->createView()]);
+    }
+
+    public function deleteClass(int $slug, Request $request, ValidatorInterface $validator): Response
+    {
+        $form = $this->createFormBuilder()
+            ->add('cancel', SubmitType::class)
+            ->add('delete', SubmitType::class)
+            ->getForm();
+
+        $class = $this->classRepo->find($slug);
+
+        $form->handleRequest($request);
+        if ($form->get('cancel')->isClicked() && $form->isValid()) {
+            return $this->redirectToRoute('show_classes', ['slug' => $slug]);
+        } elseif ($form->get('delete')->isClicked() && $form->isValid()) {
+            $class->getTutor()->removeRole(Teacher::ROLE_EDUCATOR);
+            $class->setTutor(null);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($class);
+            $em->flush();
+            $em->clear(ClassSchool::class);
+
+            $this->addFlash('success', "Successfully deleted {$class->getName()}!");
+            return $this->redirectToRoute('admin_show_classes');
+        }
+
+        return $this->render('edit_entity/delete_class.html.twig', [
+            'class' => $this->classRepo->find($slug),
+            'form' => $form->createView()
+        ]);
+    }
+
+    public function showTimetables(): Response
+    {
+        return $this->render('edit_entity/timetables.html.twig');
     }
 
     public function createSubject(): Response

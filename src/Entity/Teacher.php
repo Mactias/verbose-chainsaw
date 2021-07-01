@@ -6,6 +6,8 @@ use App\Repository\TeacherRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use function array_search;
+use function in_array;
 
 /**
  * @ORM\Entity(repositoryClass=TeacherRepository::class)
@@ -118,6 +120,19 @@ class Teacher implements UserInterface
         return $this;
     }
 
+    public function addRole(string $role)
+    {
+        if (!in_array($role, $this->roles)) {
+            $this->roles[] = $role;
+        }
+    }
+
+    public function removeRole(string $role)
+    {
+        $key = array_search($role, $this->roles);
+        unset($this->roles[$key]);
+    }
+
     /**
      * @see UserInterface
      */
@@ -191,18 +206,6 @@ class Teacher implements UserInterface
         }
 
         $this->subject = $subject;
-
-        return $this;
-    }
-
-    public function getTutor(): ?classSchool
-    {
-        return $this->tutor;
-    }
-
-    public function setTutor(?classSchool $tutor): self
-    {
-        $this->tutor = $tutor;
 
         return $this;
     }

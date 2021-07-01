@@ -1,3 +1,7 @@
+test_serializer:
+    path: /test1
+    controller: App\Controller\EditEntityController::testSerializer
+
 index:
     path: /
     controller: App\Controller\SecurityController::login
@@ -14,9 +18,25 @@ delete_teacher:
     path: /delete-teacher/{slug}
     controller: App\Controller\EditEntityController::deleteTeacher
 
-updateAclass:
-    path: /update-class
-    controller: App\Controller\EditEntityController::updateAclass
+admin_show_classes:
+    path: admin/show-classes
+    controller: App\Controller\EditEntityController::showClasses
+
+create_class:
+    path: admin/create-class
+    controller: App\Controller\EditEntityController::createClass
+
+update_class:
+    path: admin/update-class/{slug}
+    controller: App\Controller\EditEntityController::updateClass
+
+delete_class:
+    path: admin/delete-class/{slug}
+    controller: App\Controller\EditEntityController::deleteClass
+
+show_timetables:
+    path: /admin/timetables
+    controller: App\Controller\EditEntityController::showTimetables
 
 createSubject:
     path: /create-subject

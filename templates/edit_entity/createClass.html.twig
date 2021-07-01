@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Delete Teacher {{ teacher.getName }}{% endblock %}
+{% block title %}Create New Class{% endblock %}
 
 {% block body %}
     {% if app.flashes('error') is defined %}
@@ -12,16 +12,20 @@
     {% endif %}
 
     <div>
-        Do You really want delete Teacher:<br>
-        <b>{{ teacher.getName() }}</b><br>
-        <b>{{ teacher.getEmail() }}</b><br>
-    </div>
 
-    <div>
+    {{ form(form) }}
+{#
     {{ form_start(form) }}
-        {{ form_widget(form.delete) }}
-        {{ form_widget(form.cancel) }}
+        {{ form_errors(form) }}
+
+        {{ form_label(form.subject) }}
+        <ul id="subjectList">
+        {% for subject in form.subject %}
+            <li>{{ form_widget(subject) }}</li>
+        {% endfor %}
+        </ul>
+        {{ form_rest(form) }}
     {{ form_end(form) }}
     </div>
+#}
 {% endblock %}
-
