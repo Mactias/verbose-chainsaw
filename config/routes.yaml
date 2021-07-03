@@ -34,6 +34,22 @@ delete_class:
     path: admin/delete-class/{slug}
     controller: App\Controller\EditEntityController::deleteClass
 
+admin_create_pupil:
+    path: admin/create-pupil
+    controller: App\Controller\EditEntityController::createPupil
+
+admin_show_pupils:
+    path: admin/pupils
+    controller: App\Controller\EditEntityController::showPupils
+
+admin_update_pupil:
+    path: admin/update-pupil/{slug}
+    controller: App\Controller\EditEntityController::updatePupil
+
+admin_delete_pupil:
+    path: admin/delete-pupil/{slug}
+    controller: App\Controller\EditEntityController::deletePupil
+
 show_timetables:
     path: /admin/timetables
     controller: App\Controller\EditEntityController::showTimetables

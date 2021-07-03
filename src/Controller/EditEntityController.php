@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -16,6 +15,7 @@ use App\Entity\Pupil;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Form\ClassType;
+use App\Form\PupilType;
 use App\Form\TeacherType;
 use App\Form\TeacherUpdateType;
 use App\Repository\ClassSchoolRepository;
@@ -25,6 +25,7 @@ use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bridge\Doctrine\Form\Type as FormType;
 use Symfony\Component\Form\Extension\Core\Type as Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +34,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use function ksort;
 
 class EditEntityController extends AbstractController
 {
@@ -209,10 +211,10 @@ class EditEntityController extends AbstractController
             $this->addFlash('success', "created new class. Class: {$data->getName()}");
             return $this->redirectToRoute('main_menu');
         }
-        return $this->render('edit_entity/createClass.html.twig', ['form' => $form->createView()]);
+        return $this->render('edit_entity/create_class.html.twig', ['form' => $form->createView()]);
     }
 
-    public function showClasses()
+    public function showClasses(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -256,7 +258,7 @@ class EditEntityController extends AbstractController
             return $this->redirectToRoute('admin_show_classes');
         }
 
-        return $this->render('edit_entity/createClass.html.twig', ['form' => $form->createView()]);
+        return $this->render('edit_entity/create_class.html.twig', ['form' => $form->createView()]);
     }
 
     public function deleteClass(int $slug, Request $request, ValidatorInterface $validator): Response
@@ -270,7 +272,7 @@ class EditEntityController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->get('cancel')->isClicked() && $form->isValid()) {
-            return $this->redirectToRoute('show_classes', ['slug' => $slug]);
+            return $this->redirectToRoute('admin_show_classes', ['slug' => $slug]);
         } elseif ($form->get('delete')->isClicked() && $form->isValid()) {
             $class->getTutor()->removeRole(Teacher::ROLE_EDUCATOR);
             $class->setTutor(null);
@@ -288,6 +290,73 @@ class EditEntityController extends AbstractController
             'class' => $this->classRepo->find($slug),
             'form' => $form->createView()
         ]);
+    }
+
+    public function createPupil(Request $request, ValidatorInterface $validator): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $pupil = new Pupil();
+        $form = $this->createForm(PupilType::class, $pupil);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $errors = $validator->validate($data);
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
+
+                return new Response($errorsString);
+            }
+
+            $em->persist($data);
+            $em->flush($data);
+            $em->clear(Pupil::class);
+
+            $this->addFlash('success', "You created new Pupil - {$data->getName()}:(class-{$data->getClass()->getName()})");
+            return $this->redirectToRoute('main_menu');
+        }
+
+        return $this->render('edit_entity/create_pupil.html.twig', ['form' => $form->createView()]);
+    }
+
+    public function updatePupil(int $slug, Request $request): Response
+    {
+        return new Response("crud pupil");
+    }
+
+    public function deletePupil(int $slug, Request $request): Response
+    {
+        return new Response("crud pupil");
+    }
+
+    public function showPupils(Request $request): Response
+    {
+        $pupils = $this->pupilRepo->findBy([], ['name' => 'ASC']);
+        $classId = ['- All -' => 'empty'];
+        $classes = $this->classRepo->findBy([]);
+        foreach ($classes as $class) {
+            $classId[$class->getName()] = $class->getId();
+        }
+        ksort($classId);
+
+        $form = $this->createFormBuilder()
+                 ->add('sex', Form\ChoiceType::class, [
+                     'choices' => ['all' => 'empty', 'male' => 'm', 'female' => 'f']
+                 ])
+                 ->add('class', Form\ChoiceType::class, [
+                     'choices' => $classId
+                 ])
+                 ->add('search', Form\SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $pupils = $this->pupilRepo->findByManyFields('empty', $data['sex'], $data['class']);
+        }
+        return $this->render('edit_entity/pupils.html.twig', ['form' => $form->createView(), 'pupils' => $pupils]);
     }
 
     public function showTimetables(): Response

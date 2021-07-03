@@ -3,7 +3,17 @@
 {% block title %}Main Menu{% endblock %}
 
 {% block body %}
-    <h2 class="center_text">Welcome {{ user.getName }}</h2>
+    {% if app.flashes('success') is defined %}
+        <div>
+            {% for flash in app.flashes('success') %}    
+                {{ flash }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div>
+        <h2 class="center_text">Welcome {{ user.getName }}</h2>
+    </div>
 
     {% if is_granted('ROLE_ADMIN') %}
         <div id="admin_panel">
@@ -13,6 +23,8 @@
                 <li><a href="{{ path('show_timetables') }}">Update Timetable</a></li>
                 <li><a href="{{ path('admin_show_classes') }}">Update Class</a></li>
                 <li><a href="{{ path('create_class') }}">Create Class</a></li>
+                <li><a href="{{ path('admin_show_pupils') }}">Show Pupils</a></li>
+                <li><a href="{{ path('admin_create_pupil') }}">Create Pupil</a></li>
                 <li><a href="{{ path('createSubject') }}">Create Subject</a></li>
                 <li><a href="{{ path('createGrades') }}">Create new Grades</a></li>
                 <li><a href="{{ path('createManyGrades') }}">Create many Grades</a></li>

@@ -12,15 +12,6 @@
     {% endif %}
 
     {{ form_start(form) }}
-        {{ form_errors(form) }}
-
-        {{ form_label(form.subject) }}
-        <ul id="subjectList">
-        {% for subject in form.subject %}
-            <li>{{ form_widget(subject) }}</li>
-        {% endfor %}
-        </ul>
-        {# form_row(form.password) #}
         {{ form_rest(form) }}
     {{ form_end(form) }}
 {% endblock %}

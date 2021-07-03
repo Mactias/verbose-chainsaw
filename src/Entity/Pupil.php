@@ -6,6 +6,7 @@ use App\Repository\PupilRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PupilRepository::class)
@@ -21,6 +22,8 @@ class Pupil
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(min=4)
      */
     private $name;
 
@@ -32,11 +35,15 @@ class Pupil
 
     /**
      * @ORM\Column(type="string", length=9)
+     * @Assert\NotBlank
+     * @Assert\Length(min=9, max=9)
      */
     private $phone_to_parents;
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank
+     * @Assert\Choice({"m", "f"})
      */
     private $sex;
 
