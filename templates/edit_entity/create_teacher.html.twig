@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {% if app.flashes('error') is defined %}
+        <div>
+            {% for flash in app.flashes('error') %}    
+                {{ flash }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_label(form.subject) }}
+        <ul id="subjectList">
+        {% for subject in form.subject %}
+            <li>{{ form_widget(subject) }}</li>
+        {% endfor %}
+        </ul>
+        {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}

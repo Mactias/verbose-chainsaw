@@ -2,13 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-
 use App\Entity\CourseGrades;
 use App\Entity\ClassSchool;
 use App\Entity\Pupil;
@@ -59,7 +52,6 @@ class EditEntityController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->clear();
 
         $teacher = new Teacher();
         $teacher->setRoles([]);
@@ -89,7 +81,7 @@ class EditEntityController extends AbstractController
 
             $entityManager->persist($data);
             $entityManager->flush();
-            $entityManager->clear(Teacher::class);
+            $entityManager->clear();
 
             $teacher_url = $this->generateUrl('show_teacher', ['slug' => $data->getId()]);
 
@@ -100,7 +92,9 @@ class EditEntityController extends AbstractController
             );
         }
 
-        return $this->render('edit_entity/create_teacher.html.twig', ['form' => $form->createView(),]);
+        return $this->render('edit_entity/create_teacher.html.twig', [
+            'form' => $form->createView(), 'title' => 'Create new teacher'
+        ]);
     }
 
     public function updateTeacher(int $slug, UserPasswordEncoderInterface $encoder, Request $request, ValidatorInterface $validator): Response
@@ -138,7 +132,7 @@ class EditEntityController extends AbstractController
             }
 
             $entityManager->flush();
-            $entityManager->clear(Teacher::class);
+            $entityManager->clear();
 
             $teacher_url = $this->generateUrl('show_teacher', ['slug' => $data->getId()]);
 
@@ -148,7 +142,9 @@ class EditEntityController extends AbstractController
             );
         }
 
-        return $this->render('edit_entity/create_teacher.html.twig', ['form' => $form->createView(),]);
+        return $this->render('edit_entity/create_teacher.html.twig', [
+            'form' => $form->createView(), 'title' => "Edit {$teacher->getName()}"
+        ]);
     }
 
     public function deleteTeacher(int $slug, Request $request): Response
@@ -182,7 +178,6 @@ class EditEntityController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $em = $this->getDoctrine()->getManager();
-        $em->clear();
 
         $class = new ClassSchool();
         $class->setTimetable(ClassSchool::decodeEmptyTimetableToArray());
@@ -205,8 +200,7 @@ class EditEntityController extends AbstractController
 
             $em->persist($class);
             $em->flush();
-            $em->clear(ClassSchool::class);
-            $em->clear(Teacher::class);
+            $em->clear();
 
             $this->addFlash('success', "created new class. Class: {$data->getName()}");
             return $this->redirectToRoute('main_menu');
@@ -251,8 +245,7 @@ class EditEntityController extends AbstractController
             $tutor->addRole(Teacher::ROLE_EDUCATOR);
 
             $em->flush();
-            $em->clear(ClassSchool::class);
-            $em->clear(Teacher::class);
+            $em->clear();
 
             $this->addFlash('success', "Successfully updated Class: {$data->getName()}");
             return $this->redirectToRoute('admin_show_classes');

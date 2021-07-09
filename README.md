@@ -9,8 +9,8 @@ login: travisred@gmail.com<br>
 password: 123456<br><br>
 
 (Normal) Teacher<br>
-login: elizabethwilson@teleworm.us<br>
-password: qwerty111<br><br>
+login: benbradley@rhyta.com<br>
+password: 123456<br><br>
 
 admin<br>
 login: admin@admin.com<br>
